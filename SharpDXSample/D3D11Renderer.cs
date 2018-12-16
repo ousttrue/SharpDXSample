@@ -1,4 +1,5 @@
-﻿using SharpDX.Direct3D;
+﻿using SharpDX;
+using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using System;
@@ -6,15 +7,34 @@ using System;
 
 namespace SharpDXSample
 {
-    class D3D11Renderer : IDisposable
+    public class D3D11Renderer : IDisposable
     {
         public int Width { get; private set; }
         public int Height { get; private set; }
-        public SharpDX.Mathematics.Interop.RawColor4 ClearColor { get; set; }
+        Viewport Viewport
+        {
+            get
+            {
+                return new Viewport(0, 0, Width, Height, 0.0f, 1.0f);
+            }
+        }
+
+        public SharpDX.Color4 ClearColor { get; set; }
 
         SharpDX.Direct3D11.Device m_device;
+        public SharpDX.Direct3D11.Device Device
+        {
+            get { return m_device; }
+        }
+
         DeviceContext m_context;
+        public DeviceContext Context
+        {
+            get { return m_context; }
+        }
+
         DXGISwapChain m_swapChain;
+
         public void Dispose()
         {
             if (m_swapChain != null)
@@ -87,11 +107,19 @@ namespace SharpDXSample
             }
         }
 
-        public void Paint(IntPtr hWnd)
+        public void BeginRendering(IntPtr hWnd)
         {
             CreateDevice(hWnd);
 
-            m_context.ClearRenderTargetView(m_swapChain.GetRenderTargetView(m_device), ClearColor);
+            var rtv = m_swapChain.GetRenderTargetView(m_device);
+            m_context.ClearRenderTargetView(rtv, ClearColor);
+
+            m_context.OutputMerger.SetTargets(rtv);
+            m_context.Rasterizer.SetViewport(Viewport);
+        }
+
+        public void EndRendering()
+        { 
             m_swapChain.Present();
         }
     }

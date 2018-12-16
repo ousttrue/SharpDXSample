@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 
@@ -7,43 +6,39 @@ namespace SharpDXSample
 {
     public partial class D3D11Panel : UserControl
     {
-        D3D11Renderer m_renderer = new D3D11Renderer
+        D3D11Renderer m_renderer = new D3D11Renderer();
+        public D3D11Renderer Renderer
         {
-            ClearColor = new SharpDX.Mathematics.Interop.RawColor4(0, 0, 0.5f, 1.0f)
-        };
+            get { return m_renderer; }
+        }
 
-        const float ToF = 1.0f / 255;
-        public Color ClearColor
+        D3D11Shader m_shader = new D3D11Shader();
+        public D3D11Shader Shader
         {
-            get
-            {
-                return Color.FromArgb(
-                    (byte)(m_renderer.ClearColor.A * 255),
-                    (byte)(m_renderer.ClearColor.R * 255),
-                    (byte)(m_renderer.ClearColor.G * 255),
-                    (byte)(m_renderer.ClearColor.B * 255)
-                    );
-            }
-            set
-            {
-                m_renderer.ClearColor = new SharpDX.Mathematics.Interop.RawColor4(
-                    value.R * ToF,
-                    value.G * ToF,
-                    value.B * ToF,
-                    value.A * ToF
-                    );
-                Invalidate();
-            }
+            get { return m_shader; }
+        }
+
+        D3D11VertexBuffer m_buffer = new D3D11VertexBuffer();
+        public D3D11VertexBuffer Buffer
+        {
+            get { return m_buffer; }
         }
 
         public D3D11Panel()
         {
             InitializeComponent();
+            m_renderer.ClearColor =
+            new SharpDX.Mathematics.Interop.RawColor4(0, 0, 0.5f, 1.0f);
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            m_renderer.Paint(Handle);
+            m_renderer.BeginRendering(Handle);
+
+            m_shader.SetContext(m_renderer.Device, m_renderer.Context);
+            m_buffer.Draw(m_renderer.Device, m_renderer.Context);
+
+            m_renderer.EndRendering();
         }
 
         protected override void OnSizeChanged(EventArgs e)
@@ -54,6 +49,16 @@ namespace SharpDXSample
 
         public void Close()
         {
+            if (m_buffer != null)
+            {
+                m_buffer.Dispose();
+                m_buffer = null;
+            }
+            if (m_shader != null)
+            {
+                m_shader.Dispose();
+                m_shader = null;
+            }
             if (m_renderer != null)
             {
                 m_renderer.Dispose();
