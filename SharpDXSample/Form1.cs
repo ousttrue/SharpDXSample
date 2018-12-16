@@ -27,8 +27,7 @@ namespace SharpDXSample
             m_sourcePath = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "shader.fx");
             m_source = new ShaderSource();
             richTextBox1.DataBindings.Add(new Binding("Text", m_source, "Source"));
-            m_source.PropertyChanged += M_source_PropertyChanged;
-                
+            m_source.PropertyChanged += M_source_PropertyChanged;               
             m_source.Source = File.ReadAllText(m_sourcePath, Encoding.UTF8);
 
             // watch
@@ -40,7 +39,9 @@ namespace SharpDXSample
             watcher.EnableRaisingEvents = true;
 
             // vertex
-            listBox1.DataSource = m_vertices;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
+            dataGridView1.DataSource = m_vertices;
 
             m_vertices.ListChanged += (o, e) =>
               {

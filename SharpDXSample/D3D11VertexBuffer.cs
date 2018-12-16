@@ -9,7 +9,17 @@ namespace SharpDXSample
     public struct Vertex
     {
         public Vector4 Position;
+
+        public float X { get { return Position.X; } }
+        public float Y { get { return Position.Y; } }
+        public float Z { get { return Position.Z; } }
+
         public Vector4 Color;
+
+        public float R { get { return Color.X; } }
+        public float G { get { return Color.Y; } }
+        public float B { get { return Color.Z; } }
+        public float A { get { return Color.W; } }
 
         public Vertex(Vector4 pos, Vector4 col)
         {
