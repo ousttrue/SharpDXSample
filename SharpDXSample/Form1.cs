@@ -1,16 +1,19 @@
-﻿using System.Windows.Forms;
+﻿using SharpDX;
+using System;
 using System.ComponentModel;
 using System.IO;
-using System.Text;
-using System.Drawing;
 using System.Linq;
-using SharpDX;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SharpDXSample
 {
     public partial class Form1 : Form
     {
-        ShaderSource m_source = new ShaderSource();
+        string m_sourcePath;
+
+        ShaderSource m_source;
 
         BindingList<Vertex> m_vertices = new BindingList<Vertex>();
 
@@ -21,14 +24,20 @@ namespace SharpDXSample
             button1.BackColor = d3D11Panel1.Renderer.ClearColor.ToColor();
 
             // shader source
+            m_sourcePath = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "shader.fx");
+            m_source = new ShaderSource();
             richTextBox1.DataBindings.Add(new Binding("Text", m_source, "Source"));
-            m_source.PropertyChanged += (o, e) =>
-            {
-                d3D11Panel1.Shader.Source = m_source.Source;
-                d3D11Panel1.Invalidate();
-            };
-            var path = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "shader.fx");
-            m_source.Source = File.ReadAllText(path, Encoding.UTF8);
+            m_source.PropertyChanged += M_source_PropertyChanged;
+                
+            m_source.Source = File.ReadAllText(m_sourcePath, Encoding.UTF8);
+
+            // watch
+            var watcher = new System.IO.FileSystemWatcher();
+            watcher.Path = Path.GetDirectoryName(m_sourcePath);
+            watcher.NotifyFilter = System.IO.NotifyFilters.LastWrite;
+            watcher.Filter = Path.GetFileName(m_sourcePath);
+            watcher.Changed += Watcher_Changed;
+            watcher.EnableRaisingEvents = true;
 
             // vertex
             listBox1.DataSource = m_vertices;
@@ -42,6 +51,38 @@ namespace SharpDXSample
             m_vertices.Add(new Vertex(new Vector4(0.0f, 0.5f, 0.5f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f)));
             m_vertices.Add(new Vertex(new Vector4(0.5f, -0.5f, 0.5f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f)));
             m_vertices.Add(new Vertex(new Vector4(-0.5f, -0.5f, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 1.0f, 1.0f)));
+        }
+
+        private async void Watcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            await Task.Delay(100);
+
+            if (InvokeRequired)
+            {
+                Action callback = () =>
+                {
+                    Watcher_Changed(sender, e);
+                };
+                Invoke(callback);
+                return;
+            }
+            m_source.Source=File.ReadAllText(m_sourcePath, Encoding.UTF8);
+        }
+
+        private void M_source_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Action callback = () =>
+                {
+                    M_source_PropertyChanged(sender, e);
+                };
+                Invoke(callback);
+                return;
+            }
+
+            d3D11Panel1.Shader.Source = m_source.Source;
+            d3D11Panel1.Invalidate();
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
