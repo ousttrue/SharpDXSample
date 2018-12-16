@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+
 
 namespace SharpDXSample
 {
@@ -17,6 +15,7 @@ namespace SharpDXSample
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+            Console.WriteLine(SharpDX.Diagnostics.ObjectTracker.ReportActiveObjects());
         }
     }
 }

@@ -30,8 +30,8 @@
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.d3D11Panel1 = new SharpDXSample.D3D11Panel();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.d3D11Panel1 = new SharpDXSample.D3D11Panel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -78,14 +78,6 @@
             this.splitContainer2.SplitterDistance = 266;
             this.splitContainer2.TabIndex = 0;
             // 
-            // d3D11Panel1
-            // 
-            this.d3D11Panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.d3D11Panel1.Location = new System.Drawing.Point(0, 0);
-            this.d3D11Panel1.Name = "d3D11Panel1";
-            this.d3D11Panel1.Size = new System.Drawing.Size(530, 266);
-            this.d3D11Panel1.TabIndex = 0;
-            // 
             // listBox1
             // 
             this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -95,6 +87,14 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(266, 266);
             this.listBox1.TabIndex = 0;
+            // 
+            // d3D11Panel1
+            // 
+            this.d3D11Panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.d3D11Panel1.Location = new System.Drawing.Point(0, 0);
+            this.d3D11Panel1.Name = "d3D11Panel1";
+            this.d3D11Panel1.Size = new System.Drawing.Size(530, 266);
+            this.d3D11Panel1.TabIndex = 0;
             // 
             // richTextBox1
             // 
@@ -113,6 +113,7 @@
             this.Controls.Add(this.splitContainer1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
